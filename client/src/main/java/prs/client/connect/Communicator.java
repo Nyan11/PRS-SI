@@ -23,4 +23,13 @@ public class Communicator {
 		Communicator.br.close();
 		Communicator.ps.close();
 	}
+	
+	public String sendMessage(String message) throws IOException {
+		ps.println(message);
+		return br.readLine();
+	}
+
+	public String retreiveMessage() throws IOException {
+		return br.readLine();
+	}
 }

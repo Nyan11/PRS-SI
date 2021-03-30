@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import prs.client.connect.Communicator;
 import prs.client.view.ViewGlobal;
@@ -43,13 +44,30 @@ public class Controller {
 		double height;
 		double width;
 
-		height = stage.getScene().getHeight();
-		width = stage.getScene().getWidth();
-		app = new ViewGlobal();
-		mainScene = new Scene(app, width, height);
 		
-		stage.setScene(mainScene);
-		stage.show();
+		try {
+			height = stage.getScene().getHeight();
+			width = stage.getScene().getWidth();
+			app = new ViewGlobal(this, communicator.retreiveMessage());
+			mainScene = new Scene(app, width, height);
+			stage.setScene(mainScene);
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
+		
+	}
+	
+	public void sendInstructions(String script, TextArea outputText) {
+		String response;
+		try {
+			response = this.communicator.sendMessage(script);
+			System.out.println(response);
+			outputText.setText(outputText.getText() + "\n" + response);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

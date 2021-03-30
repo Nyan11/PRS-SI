@@ -29,6 +29,7 @@ public class WorkerClient implements Runnable {
 
 				while(!(commande=br.readLine()).equals("xxx")) {
 					System.out.println(">> "+commande);
+					ps.println("instruction ok.");
 					// DO SOMETHING
 				}
 

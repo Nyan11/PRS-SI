@@ -8,7 +8,7 @@ import graphicLayer.GRect;
 import graphicLayer.GSpace;
 
 public class Exercice1_0 {
-	GSpace space = new GSpace("Exercice 1", new Dimension(200, 150));
+	GSpace space = new GSpace("Exercice 1", new Dimension(600, 400));
 	GRect robi = new GRect();
 	float speed = 100; // pixel per sec
 	int updateTime = 60;

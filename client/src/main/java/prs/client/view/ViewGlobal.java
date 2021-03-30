@@ -14,6 +14,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import prs.client.control.Controller;
 
 public class ViewGlobal extends BorderPane {
 	TextArea inputText;
@@ -23,18 +24,23 @@ public class ViewGlobal extends BorderPane {
 	MenuItem fichierOuvrir;
 	MenuItem fichierSauver;
 	MenuItem fichierFermer;
+	
+	Controller control;
 
-	public ViewGlobal() {
+	public ViewGlobal(Controller control, String welcomeMessage) {
 		super();
+		this.control = control;
 		generateView();
 		executeAction();
 		menuAction();
+		this.outputText.setText(welcomeMessage + "\n");
 	}
 
 	private void executeAction() {
 		executeButton.setOnAction(e -> {
 			System.out.println("b1_exec");
 			System.out.println("inputText = " + inputText.getText());
+			control.sendInstructions(inputText.getText(), outputText);
 		});
 	}
 
