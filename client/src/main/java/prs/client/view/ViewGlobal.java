@@ -38,8 +38,6 @@ public class ViewGlobal extends BorderPane {
 
 	private void executeAction() {
 		executeButton.setOnAction(e -> {
-			System.out.println("b1_exec");
-			System.out.println("inputText = " + inputText.getText());
 			control.sendInstructions(inputText.getText(), outputText);
 		});
 	}

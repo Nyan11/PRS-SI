@@ -24,6 +24,9 @@ import java.util.List;
 
 import graphicLayer.GRect;
 import graphicLayer.GSpace;
+import logic.Environment;
+import logic.Reference;
+import logic.command.*;
 import stree.parser.SNode;
 import stree.parser.SParser;
 import tools.Tools;
@@ -48,10 +51,16 @@ public class Exercice4_1_0 {
 		//
 		// <A VOUS DE CODER>
 		//
+		spaceRef.addCommand("setColor", new SetColor());
+		
+		robiRef.addCommand("setColor", new SetColor());
+		robiRef.addCommand("translate", new Translate());
+		robiRef.addCommand("setDim", new SetDim());
 
 		// Enrigestrement des references dans l'environement par leur nom
 		environment.addReference("space", spaceRef);
 		environment.addReference("robi", robiRef);
+		Environment.initialisation(environment);
 
 		this.mainLoop();
 	}

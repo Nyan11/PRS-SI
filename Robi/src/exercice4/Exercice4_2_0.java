@@ -46,6 +46,10 @@ import graphicLayer.GOval;
 import graphicLayer.GRect;
 import graphicLayer.GSpace;
 import graphicLayer.GString;
+import logic.Environment;
+import logic.Interpreter;
+import logic.Reference;
+import logic.command.*;
 import stree.parser.SNode;
 import stree.parser.SParser;
 import tools.Tools;
@@ -74,33 +78,44 @@ class NewElement implements Command {
 public class Exercice4_2_0 {
 	// Une seule variable d'instance
 	Environment environment = new Environment();
+	GSpace space;
 
 	public Exercice4_2_0() {
-		GSpace space = new GSpace("Exercice 4", new Dimension(200, 100));
+		space = new GSpace("Exercice 4", new Dimension(200, 100));
 		space.open();
 
 		Reference spaceRef = new Reference(space);
+		
+		/*
 		Reference rectClassRef = new Reference(GRect.class);
 		Reference ovalClassRef = new Reference(GOval.class);
 		Reference imageClassRef = new Reference(GImage.class);
 		Reference stringClassRef = new Reference(GString.class);
-
+		*/
 		spaceRef.addCommand("setColor", new SetColor());
 		spaceRef.addCommand("sleep", new Sleep());
 
 		spaceRef.addCommand("add", new AddElement());
 		spaceRef.addCommand("del", new DelElement());
 		
+		spaceRef.addCommand("info", new InfoReference());
+		
+		spaceRef.getEnvironment();
+		
+		environment.addReference("space", spaceRef);
+		
+		/*
 		rectClassRef.addCommand("new", new NewElement());
 		ovalClassRef.addCommand("new", new NewElement());
 		imageClassRef.addCommand("new", new NewImage());
 		stringClassRef.addCommand("new", new NewString());
 
-		environment.addReference("space", spaceRef);
+		
 		environment.addReference("rect.class", rectClassRef);
 		environment.addReference("oval.class", ovalClassRef);
 		environment.addReference("image.class", imageClassRef);
 		environment.addReference("label.class", stringClassRef);
+		*/
 		
 		this.mainLoop();
 	}
@@ -125,6 +140,7 @@ public class Exercice4_2_0 {
 			Iterator<SNode> itor = compiled.iterator();
 			while (itor.hasNext()) {
 				new Interpreter().compute(environment, itor.next());
+				space.repaint();
 			}
 		}
 	}

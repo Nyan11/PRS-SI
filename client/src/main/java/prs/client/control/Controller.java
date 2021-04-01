@@ -49,6 +49,7 @@ public class Controller {
 			height = stage.getScene().getHeight();
 			width = stage.getScene().getWidth();
 			app = new ViewGlobal(this, communicator.retreiveMessage());
+			System.out.println("Debug1");
 			mainScene = new Scene(app, width, height);
 			stage.setScene(mainScene);
 			stage.show();
@@ -61,6 +62,7 @@ public class Controller {
 	
 	public void sendInstructions(String script, TextArea outputText) {
 		String response;
+		System.out.println(script);
 		try {
 			response = this.communicator.sendMessage(script);
 			System.out.println(response);

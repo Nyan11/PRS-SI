@@ -25,11 +25,24 @@ public class Communicator {
 	}
 	
 	public String sendMessage(String message) throws IOException {
+		System.out.println("Sending message");
+		message += "\nstop";
 		ps.println(message);
-		return br.readLine();
+		return retreiveMessage();
 	}
 
 	public String retreiveMessage() throws IOException {
+		String message;
+		String sret = "";
+		System.out.println("Retreiving message");
+		while(!(message = br.readLine()).startsWith("stop")) {
+			sret += message + "\n";
+			System.out.println(message);
+		}
+		return sret;
+	}
+	
+	public String retreiveWelcome() throws IOException {
 		return br.readLine();
 	}
 }
