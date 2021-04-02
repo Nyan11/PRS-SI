@@ -9,9 +9,11 @@ import graphicLayer.GSpace;
 public class Interpreter {
 
 	public void compute(Environment environment, SNode next) {
+		Reference exec;
 		try {
 			Reference receiver = getReceiver(environment, next);
-			receiver.run(next);
+			exec = receiver.run(next);
+			System.out.println(exec);
 		} catch(NullPointerException e) {
 			System.out.println("Wrong");
 		}

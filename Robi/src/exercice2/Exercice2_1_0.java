@@ -44,19 +44,19 @@ public class Exercice2_1_0 {
 		expr.children().forEach(e -> System.out.print(e.contents() + " "));
 		System.out.println();
 		
-		identifier = expr.children().get(0);
+		identifier = expr.get(0);
 		if(identifier.contents().compareTo("space") == 0) {
-			action = expr.children().get(1);
+			action = expr.get(1);
 			if(action.contents().compareTo("setColor") == 0) {
-				arg1 = expr.children().get(2);
+				arg1 = expr.get(2);
 				space.setColor(Tools.getColorByName(arg1.contents()));
 				System.out.println("ok");
 			}
 			
 		} else if(identifier.contents().compareTo("robi") == 0) {
-			action = expr.children().get(1);
+			action = expr.get(1);
 			if(action.contents().compareTo("setColor") == 0) {
-				arg1 = expr.children().get(2);
+				arg1 = expr.get(2);
 				robi.setColor(Tools.getColorByName(arg1.contents()));
 				System.out.println("ok");
 			}
