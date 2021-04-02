@@ -14,10 +14,8 @@ public class DelElement implements Command {
 		String name = method.get(2).contents();
 		Reference ref = environment.getReferenceByName(name);
 		environment.deleteReferenceByName(name);
-		
 		((GContainer) reference.getReceiver()).removeElement((GElement) ref.getReceiver());
 		((GContainer) reference.getReceiver()).repaint();
 		return ref;
 	}
-
 }

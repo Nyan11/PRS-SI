@@ -26,6 +26,7 @@ import graphicLayer.GRect;
 import graphicLayer.GSpace;
 import logic.Environment;
 import logic.Reference;
+import logic.TypeReference;
 import logic.command.*;
 import stree.parser.SNode;
 import stree.parser.SParser;
@@ -60,7 +61,7 @@ public class Exercice4_1_0 {
 		// Enrigestrement des references dans l'environement par leur nom
 		environment.addReference("space", spaceRef);
 		environment.addReference("robi", robiRef);
-		Environment.initialisation(environment);
+		TypeReference.init(environment);
 
 		this.mainLoop();
 	}

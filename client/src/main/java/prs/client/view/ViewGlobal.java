@@ -1,9 +1,13 @@
 package prs.client.view;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -24,7 +28,7 @@ public class ViewGlobal extends BorderPane {
 	MenuItem fichierOuvrir;
 	MenuItem fichierSauver;
 	MenuItem fichierFermer;
-	
+
 	Controller control;
 
 	public ViewGlobal(Controller control, String welcomeMessage) {
@@ -67,12 +71,48 @@ public class ViewGlobal extends BorderPane {
 					bin = new BufferedReader(new FileReader(fileToLoad));
 
 					while((line = bin.readLine()) != null) {
-						text += "\n" + line;
+						text += line + "\n";
 					}
 					inputText.setText(text);
 				}
 				catch (IOException e1) {
 					e1.printStackTrace();
+				}
+			}
+			else {
+				System.out.println("file = null");
+			}
+		});
+		fichierSauver.setOnAction(e -> {
+			FileChooser fileChooser = new FileChooser();
+			File fileToSave;
+			PrintStream out;
+
+			//set initial directory somewhere user will recognise
+			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+			fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text file(*.txt)", "*.txt"));
+			fileChooser.setInitialFileName("*.txt");
+
+			//let user select file
+			fileToSave = fileChooser.showSaveDialog(null);
+
+			if (fileToSave != null) {
+				System.out.println("file = "+fileToSave.getPath());
+				if(fileToSave.getName().endsWith(".txt")) {
+
+					try {
+						out = new PrintStream(new FileOutputStream(fileToSave));
+						out.print(inputText.getText());
+						out.close();
+
+						System.out.println(inputText.getText());
+					}	catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+				else {
+					//throw new Exception(fileToSave.getName() + " has no valid file-extension.");
+					System.out.println(fileToSave.getName() + " has no valid file-extension.");
 				}
 			}
 			else {

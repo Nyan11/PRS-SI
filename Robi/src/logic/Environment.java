@@ -27,24 +27,8 @@ public class Environment {
 	}
 	
 	public void deleteReferenceByName(String name) {
+		TypeReference.end(this.getReferenceByName(name).getEnvironment());
 		this.variables.remove(name);
-	}
-	
-	public static void initialisation(Environment e) {
-		Reference rectClassRef = new Reference(GRect.class);
-		Reference ovalClassRef = new Reference(GOval.class);
-		Reference imageClassRef = new Reference(GImage.class);
-		Reference stringClassRef = new Reference(GString.class);
-		
-		rectClassRef.addCommand("new", new NewElement());
-		ovalClassRef.addCommand("new", new NewElement());
-		imageClassRef.addCommand("new", new NewImage());
-		stringClassRef.addCommand("new", new NewString());
-		
-		e.addReference("rect.class", rectClassRef);
-		e.addReference("oval.class", ovalClassRef);
-		e.addReference("image.class", imageClassRef);
-		e.addReference("label.class", stringClassRef);
 	}
 	
 	public void show() {

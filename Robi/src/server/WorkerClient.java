@@ -47,7 +47,7 @@ public class WorkerClient implements Runnable {
 
 	@Override
 	public void run() {
-		String commande = "";
+		String commande;
 		try {
 			try {
 				ps.println("Connection with ROBI");
@@ -61,8 +61,9 @@ public class WorkerClient implements Runnable {
 					// Attraper toutes les exceptions de commande ici
 					parseCommande(commande);
 					
+					
+					// envoyer le bon message
 					commande += " -- ok";
-
 					ps.println(commande + "\nstop");
 				}
 
@@ -83,7 +84,7 @@ public class WorkerClient implements Runnable {
 	}
 
 	public void initEnv(String client) {
-		space = new GSpace(client, new Dimension(200, 100));
+		space = new GSpace(client, new Dimension(800, 600));
 		Reference spaceRef = new Reference(space);
 		spaceRef.addCommand("setColor", new SetColor());
 		spaceRef.addCommand("sleep", new Sleep());

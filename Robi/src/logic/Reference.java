@@ -43,7 +43,7 @@ public class Reference {
 	public Environment getEnvironment() {
 		if(this.environment == null) {
 			environment = new Environment();
-			Environment.initialisation(environment);
+			TypeReference.init(environment);
 		}
 		return this.environment;
 	}

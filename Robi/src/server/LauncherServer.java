@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class LauncherServer implements Runnable{
+public class LauncherServer {
 
 	protected int serverPort   = -1;
 	protected ServerSocket serverSocket = null;
@@ -13,9 +13,7 @@ public class LauncherServer implements Runnable{
 		this.serverPort = port;
 	}
 
-
-	@Override
-	public void run() {
+	public void start() {
 		try {
 			Socket clientSocket = null;
 			WorkerClient worker = null;
