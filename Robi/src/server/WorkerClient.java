@@ -17,6 +17,7 @@ import logic.Environment;
 import logic.Interpreter;
 import logic.Reference;
 import logic.command.AddElement;
+import logic.command.AddScript;
 import logic.command.DelElement;
 import logic.command.InfoReference;
 import logic.command.SetColor;
@@ -93,6 +94,7 @@ public class WorkerClient implements Runnable {
 		spaceRef.addCommand("del", new DelElement());
 
 		spaceRef.addCommand("info", new InfoReference());
+		spaceRef.addCommand("addScript", new AddScript());
 
 		spaceRef.getEnvironment();
 

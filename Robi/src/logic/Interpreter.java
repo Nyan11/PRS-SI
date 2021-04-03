@@ -2,10 +2,6 @@ package logic;
 
 import stree.parser.SNode;
 
-import java.util.stream.Stream;
-
-import graphicLayer.GSpace;
-
 public class Interpreter {
 
 	public void compute(Environment environment, SNode next) {
@@ -13,8 +9,8 @@ public class Interpreter {
 		try {
 			Reference receiver = getReceiver(environment, next);
 			exec = receiver.run(next);
-			System.out.println(exec);
 		} catch(NullPointerException e) {
+			e.printStackTrace();
 			System.out.println("Wrong");
 		}
 	}

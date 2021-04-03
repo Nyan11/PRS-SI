@@ -3,11 +3,7 @@ package logic;
 import java.util.HashMap;
 import java.util.Map;
 
-import logic.command.AddElement;
 import logic.command.Command;
-import logic.command.DelElement;
-import logic.command.InfoReference;
-import logic.command.SetColor;
 import stree.parser.SNode;
 
 public class Reference {
@@ -18,8 +14,6 @@ public class Reference {
 	public Reference(Object receiver) {
 		this.receiver = receiver;
 		primitives = new HashMap<String, Command>();
-		this.addCommand("add", new AddElement());
-		this.addCommand("del", new DelElement());
 	}
 
 	public void addCommand(String selector, Command primitive) {
@@ -33,7 +27,10 @@ public class Reference {
 	public Reference run(SNode expr) {
 		String primitiveName = expr.get(1).contents();
 		Command command = this.getCommandByName(primitiveName);
-		return (command != null) ? command.run(this, expr) : null;
+		if (command != null)
+			return command.run(this, expr);
+		else
+			return null;
 	}
 	
 	public Object getReceiver() {

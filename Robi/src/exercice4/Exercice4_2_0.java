@@ -99,6 +99,7 @@ public class Exercice4_2_0 {
 		spaceRef.addCommand("del", new DelElement());
 		
 		spaceRef.addCommand("info", new InfoReference());
+		spaceRef.addCommand("addScript", new AddScript());
 		
 		spaceRef.getEnvironment();
 		

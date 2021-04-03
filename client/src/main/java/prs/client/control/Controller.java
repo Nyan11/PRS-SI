@@ -64,7 +64,7 @@ public class Controller {
 		String response;
 		System.out.println(script);
 		try {
-			response = this.communicator.sendMessage(script);
+			response = this.communicator.sendMessage(script.replace("\n", ""));
 			System.out.println(response);
 			outputText.setText(outputText.getText() + "\n" + response);
 		} catch (Exception e) {

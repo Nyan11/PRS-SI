@@ -16,6 +16,9 @@ public class AddElement implements Command {
 		Reference ref = (Reference) environment.getReferenceByName(type).run(method.get(3));
 		environment.addReference(name, ref);
 		ref.addCommand("info", new InfoReference());
+		ref.addCommand("add", new AddElement());
+		ref.addCommand("del", new DelElement());
+		ref.addCommand("addScript", new AddScript());
 		((GContainer) reference.getReceiver()).addElement((GElement) ref.getReceiver());
 		((GContainer) reference.getReceiver()).repaint();
 		return ref;
