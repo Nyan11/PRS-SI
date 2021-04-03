@@ -52,6 +52,12 @@ public class Reference {
 	}
 	
 	public String toString() {
-		return receiver.toString();
+		String ret = getEnvironment().toString();
+		ret += "Primitives: [";
+		for(String methodeName : primitives.keySet())
+			ret += methodeName + ", ";
+		ret = ret.substring(0, ret.length() - 2);
+		ret += "]\n";
+		return ret;
 	}
 }

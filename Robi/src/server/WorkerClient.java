@@ -24,6 +24,7 @@ import logic.command.SetColor;
 import logic.command.Sleep;
 import stree.parser.SNode;
 import stree.parser.SParser;
+import stree.parser.SSyntaxError;
 import tools.Tools;
 
 public class WorkerClient implements Runnable {
@@ -31,14 +32,16 @@ public class WorkerClient implements Runnable {
 	private Socket clientSocket;
 	private Environment environment;
 	private GSpace space;
-	BufferedReader br = null;
-	PrintStream ps = null;
+	private BufferedReader br = null;
+	private PrintStream ps = null;
+	private Interpreter interpreter;
 
 	public WorkerClient(Socket clientSocket) {
 		try {
 			this.clientSocket = clientSocket;
 			br = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
 			ps = new PrintStream(this.clientSocket.getOutputStream());
+			this.interpreter = new Interpreter(ps);
 			this.environment = new Environment();
 			initEnv(clientSocket.getInetAddress().getHostName());
 		} catch (IOException e) {
@@ -56,16 +59,17 @@ public class WorkerClient implements Runnable {
 				while(true) {
 					commande = retrieveCommande();
 					if(commande.equals("quit")) break;
-					
+
 					System.out.println(commande);
 
-					// Attraper toutes les exceptions de commande ici
-					parseCommande(commande);
-					
-					
-					// envoyer le bon message
-					commande += " -- ok";
-					ps.println(commande + "\nstop");
+					try {
+						parseCommande(commande);
+					} catch (SSyntaxError e) {
+						ps.println("### ERROR(SSyntaxError) ###");
+						System.out.println("Erreur de syntaxe");
+					} finally {
+						ps.println("\nstop");
+					}
 				}
 
 				System.out.println("Deconnexion du client");
@@ -101,18 +105,18 @@ public class WorkerClient implements Runnable {
 		environment.addReference("space", spaceRef);
 		space.open();
 	}
-	
-	private void parseCommande(String commande) throws IOException {
+
+	private void parseCommande(String commande) throws IOException, SSyntaxError {
 		SParser<SNode> parser = new SParser<>();
 		List<SNode> compiled = null;
 		compiled = parser.parse(commande);
 		Iterator<SNode> itor = compiled.iterator();
 		while (itor.hasNext()) {
-			new Interpreter().compute(environment, itor.next());
+			interpreter.compute(environment, itor.next());
 			space.repaint();
 		}
 	}
-	
+
 	private String retrieveCommande() throws IOException {
 		String line;
 		String commande = "";

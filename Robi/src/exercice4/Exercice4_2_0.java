@@ -140,7 +140,7 @@ public class Exercice4_2_0 {
 			// execution des s-expressions compilees
 			Iterator<SNode> itor = compiled.iterator();
 			while (itor.hasNext()) {
-				new Interpreter().compute(environment, itor.next());
+				new Interpreter(System.out).compute(environment, itor.next());
 				space.repaint();
 			}
 		}

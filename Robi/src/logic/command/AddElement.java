@@ -18,6 +18,7 @@ public class AddElement implements Command {
 		ref.addCommand("info", new InfoReference());
 		ref.addCommand("add", new AddElement());
 		ref.addCommand("del", new DelElement());
+		ref.addCommand("sleep", new Sleep());
 		ref.addCommand("addScript", new AddScript());
 		((GContainer) reference.getReceiver()).addElement((GElement) ref.getReceiver());
 		((GContainer) reference.getReceiver()).repaint();

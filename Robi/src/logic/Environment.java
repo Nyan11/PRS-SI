@@ -28,5 +28,14 @@ public class Environment {
 			System.out.println(k + " : " + i);
 		});
 	}
+	
+	public String toString() {
+		String ret = "Environment: [";
+		for(String variableName : variables.keySet())
+			ret += variableName + ", ";
+		ret = ret.substring(0, ret.length() - 2);
+		ret += "]\n";
+		return ret;
+	}
 
 }
