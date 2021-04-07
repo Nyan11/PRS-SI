@@ -20,6 +20,7 @@ import logic.command.AddElement;
 import logic.command.AddScript;
 import logic.command.DelElement;
 import logic.command.InfoReference;
+import logic.command.PrintScreen;
 import logic.command.SetColor;
 import logic.command.Sleep;
 import stree.parser.SNode;
@@ -66,6 +67,7 @@ public class WorkerClient implements Runnable {
 						parseCommande(commande);
 					} catch (SSyntaxError e) {
 						ps.println("### ERROR(SSyntaxError) ###");
+						ps.println(e.getMessage());
 						System.out.println("Erreur de syntaxe");
 					} finally {
 						ps.println("\nstop");
@@ -99,6 +101,7 @@ public class WorkerClient implements Runnable {
 
 		spaceRef.addCommand("info", new InfoReference());
 		spaceRef.addCommand("addScript", new AddScript());
+		spaceRef.addCommand("print", new PrintScreen(space));
 
 		spaceRef.getEnvironment();
 

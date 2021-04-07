@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -18,6 +19,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import prs.client.control.Controller;
 
 public class ViewGlobal extends BorderPane {
@@ -28,6 +30,7 @@ public class ViewGlobal extends BorderPane {
 	MenuItem fichierOuvrir;
 	MenuItem fichierSauver;
 	MenuItem fichierFermer;
+	MenuItem aideApropos;
 
 	Controller control;
 
@@ -48,27 +51,16 @@ public class ViewGlobal extends BorderPane {
 
 	private void menuAction() {
 		fichierOuvrir.setOnAction(e -> {
-			FileChooser fileChooser = new FileChooser();
-			File fileToLoad;
+			File file;
 			BufferedReader bin;
 			String text = "";
 			String line = "";
+			file = control.showDialog(false, "user.home", "txt", "Text file(*.txt)");
 
-			//only allow text files to be selected using chooser
-			fileChooser.getExtensionFilters().add(
-					new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt")
-					);
-
-			//set initial directory somewhere user will recognise
-			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-
-			//let user select file
-			fileToLoad = fileChooser.showOpenDialog(null);
-
-			if (fileToLoad != null) {
-				System.out.println("file = "+fileToLoad.getPath());
+			if (file != null) {
+				System.out.println("file = "+file.getPath());
 				try {
-					bin = new BufferedReader(new FileReader(fileToLoad));
+					bin = new BufferedReader(new FileReader(file));
 
 					while((line = bin.readLine()) != null) {
 						text += line + "\n";
@@ -84,40 +76,36 @@ public class ViewGlobal extends BorderPane {
 			}
 		});
 		fichierSauver.setOnAction(e -> {
-			FileChooser fileChooser = new FileChooser();
-			File fileToSave;
+			File file;
 			PrintStream out;
-
-			//set initial directory somewhere user will recognise
-			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-			fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text file(*.txt)", "*.txt"));
-			fileChooser.setInitialFileName("*.txt");
-
-			//let user select file
-			fileToSave = fileChooser.showSaveDialog(null);
-
-			if (fileToSave != null) {
-				System.out.println("file = "+fileToSave.getPath());
-				if(fileToSave.getName().endsWith(".txt")) {
-
+			file = control.showDialog(true, "user.home", "txt", "Text file(*.txt)");
+			if (file != null) {
+				if(file.getName().endsWith(".txt")) {
 					try {
-						out = new PrintStream(new FileOutputStream(fileToSave));
+						out = new PrintStream(new FileOutputStream(file));
 						out.print(inputText.getText());
 						out.close();
-
-						System.out.println(inputText.getText());
 					}	catch (IOException e1) {
 						e1.printStackTrace();
 					}
 				}
 				else {
-					//throw new Exception(fileToSave.getName() + " has no valid file-extension.");
-					System.out.println(fileToSave.getName() + " has no valid file-extension.");
+					System.out.println(file.getName() + " has no valid file-extension.");
 				}
 			}
 			else {
 				System.out.println("file = null");
 			}
+		});
+		fichierFermer.setOnAction(e -> {
+			this.control.sendQuit();
+		});
+		aideApropos.setOnAction(e -> {
+			Stage stage = new Stage();
+			Scene scene = new Scene(new AboutView(), 640, 480);
+			stage.setScene(scene);
+			stage.setTitle("A Propos");
+			stage.show();
 		});
 	}
 
@@ -139,13 +127,16 @@ public class ViewGlobal extends BorderPane {
 	private MenuBar generateMenu() {
 		MenuBar menuBar = new MenuBar();
 		Menu menuFichier = new Menu("Fichier");
+		Menu menuAide = new Menu("Aide");
 		fichierOuvrir = new MenuItem("Ouvrir");
 		fichierSauver = new MenuItem("Sauver");
-		fichierFermer = new MenuItem("Fermer");
+		fichierFermer = new MenuItem("Déconnexion");
+		aideApropos = new MenuItem("A propos");
 
-		menuBar.getMenus().add(menuFichier);
+		menuBar.getMenus().addAll(menuFichier, menuAide);
 
 		menuFichier.getItems().addAll(fichierOuvrir, fichierSauver, fichierFermer);
+		menuAide.getItems().addAll(aideApropos);
 		return menuBar;
 	}
 }

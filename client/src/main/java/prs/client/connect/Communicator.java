@@ -7,6 +7,8 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import prs.client.control.Controller;
+
 public class Communicator {
 	protected static Socket socket;
 	protected static BufferedReader br;
@@ -36,13 +38,27 @@ public class Communicator {
 		String sret = "";
 		System.out.println("Retreiving message");
 		while(!(message = br.readLine()).startsWith("stop")) {
-			sret += message + "\n";
-			System.out.println(message);
+			if(message.startsWith("print::")) {
+				Controller.saveImage(message.split(" ")[1]);
+			}
+			else {
+				sret += message + "\n";
+				System.out.println(message);
+			}
 		}
 		return sret;
 	}
 	
 	public String retreiveWelcome() throws IOException {
 		return br.readLine();
+	}
+	
+	public void sendQuit() {
+		ps.println("quit");
+		try {
+			closeAll();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

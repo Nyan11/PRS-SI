@@ -18,8 +18,14 @@ public class Interpreter {
 			Reference receiver = getReceiver(environment, next);
 			ps.println(recoverCommand(next) + " -- ok");
 			exec = receiver.run(next);
-			if(next.get(1).contents().compareTo("info") == 0)
-				ps.println(exec.toString());
+			switch(next.get(1).contents()) {
+				case "info":
+					ps.println("print:: " + exec.toString());
+					break;
+				case "print":
+					ps.println(exec.getReceiver());
+					break;
+			}
 		} catch(NullPointerException e) {
 			e.printStackTrace();
 			ps.println("### ERROR(NullPointerException) ###");
