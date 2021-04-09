@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 import prs.client.control.Controller;
 
 public class Communicator {
-	private static Message STOP = new Message("stop", "");
+	//private static Message STOP = new Message("stop", "");
 	private static Message NEXT = new Message("next", "");
 	private static Message STEP = new Message("step", "");
 	private static Message NOSTEP = new Message("nostep", "");

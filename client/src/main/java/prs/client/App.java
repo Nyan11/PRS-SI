@@ -2,13 +2,9 @@ package prs.client;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import prs.client.connect.Communicator;
 import prs.client.control.Controller;
-import prs.client.view.AboutView;
-import prs.client.view.ViewGlobal;
 import prs.client.view.ViewLogin;
 
 /*
@@ -47,8 +43,7 @@ public class App extends Application {
         
     	Controller control = new Controller(stage);
         //Scene scene = new Scene(new ViewGlobal(control, "hello"));
-        
-    	
+    	//Scene scene = new Scene(new AboutView());
         Scene scene = new Scene(new ViewLogin(control), 640, 480);
         stage.setOnCloseRequest(e -> {
         	try {
@@ -56,7 +51,6 @@ public class App extends Application {
         	}
         	catch(Exception ex) {}
         });
-        //Scene scene = new Scene(new AboutView());
     	stage.setTitle("Projet L3");
         stage.setScene(scene);
         stage.show();

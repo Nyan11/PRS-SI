@@ -22,7 +22,7 @@ public class Environment {
 		TypeReference.end(this.getReferenceByName(name).getEnvironment());
 		this.variables.remove(name);
 	}
-	
+
 	public void show() {
 		variables.forEach((k, i) -> {
 			System.out.println(k + " : " + i);

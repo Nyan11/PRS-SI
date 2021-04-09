@@ -60,7 +60,7 @@ public class RunScript implements Command {
 		}
 		return toReturn; 
 	}
-	// (space addScript nr ((self name) (self add name (rect.class new)))) 
+
 	private void generateMap(SNode method) {
 		this.map.put(arguments.get(0).contents(), method.get(0).contents());
 		for(int i = 1; i < this.nbArguments; i++) {
