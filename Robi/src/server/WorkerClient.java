@@ -26,16 +26,19 @@ import logic.command.Sleep;
 import stree.parser.SNode;
 import stree.parser.SParser;
 import stree.parser.SSyntaxError;
-import tools.Tools;
+import utils.Message;
 
 public class WorkerClient implements Runnable {
 
+	private static Message STOP = new Message("stop", "");
 	private Socket clientSocket;
 	private Environment environment;
 	private GSpace space;
 	private BufferedReader br = null;
 	private PrintStream ps = null;
 	private Interpreter interpreter;
+	private boolean stepByStep = false;
+	private boolean quit = false;
 
 	public WorkerClient(Socket clientSocket) {
 		try {
@@ -55,25 +58,25 @@ public class WorkerClient implements Runnable {
 		String commande;
 		try {
 			try {
-				ps.println("Connection with ROBI");
-				ps.println("stop");
-				while(true) {
+				ps.println(Message.toJson(new Message("greeting", "Hello from Robi server !")));
+				ps.println(Message.toJson(STOP));
+				while(!quit) {
 					commande = retrieveCommande();
-					if(commande.equals("quit")) break;
+					if(commande.equals("quit")) quit = true;
 
 					System.out.println(commande);
-
-					try {
-						parseCommande(commande);
-					} catch (SSyntaxError e) {
-						ps.println("### ERROR(SSyntaxError) ###");
-						ps.println(e.getMessage());
-						System.out.println("Erreur de syntaxe");
-					} finally {
-						ps.println("\nstop");
+					if(!quit) {
+						try {
+							parseCommande(commande);
+						} catch (SSyntaxError e) {
+							ps.println(Message.toJson(new Message("error", "SSyntaxError")));
+							ps.println(Message.toJson(new Message("error", e.getMessage())));
+							System.out.println("Erreur de syntaxe");
+						} finally {
+							ps.println(Message.toJson(STOP));
+						}
 					}
 				}
-
 				System.out.println("Deconnexion du client");
 			} catch (NullPointerException e) {
 				System.out.println("Deconnexion du client (Null Pointer Exception)");
@@ -110,22 +113,43 @@ public class WorkerClient implements Runnable {
 	}
 
 	private void parseCommande(String commande) throws IOException, SSyntaxError {
+		Message receive;
 		SParser<SNode> parser = new SParser<>();
 		List<SNode> compiled = null;
 		compiled = parser.parse(commande);
 		Iterator<SNode> itor = compiled.iterator();
 		while (itor.hasNext()) {
+			if(stepByStep) {
+				if((receive = Message.fromJson(br.readLine())).getType().compareTo("next") != 0) {
+					if(receive.getType().compareTo("quit") == 0) quit = true;
+					stepByStep = false;
+				}
+				ps.println(Message.toJson(STOP));
+			}
 			interpreter.compute(environment, itor.next());
 			space.repaint();
 		}
 	}
 
 	private String retrieveCommande() throws IOException {
-		String line;
+		Message receive;
 		String commande = "";
-		while(!(line = br.readLine()).equals("stop") && !(line.equals("quit"))) {
-			commande += line + "\n";
+		String type;
+		while((receive = Message.fromJson(br.readLine())).getType().compareTo("instruction") == 0) {
+			commande += receive.getMessage() + "\n";
 		}
-		return (line.equals("quit")) ? "quit" : commande;
+		type = receive.getType();
+		if (type.compareTo("instruction") == 0) {
+			return commande;
+		} else if(type.compareTo("step") == 0) {
+			stepByStep = true;
+			return commande;
+		} else if(type.compareTo("nostep") == 0) {
+			stepByStep = false;
+			return commande;
+		} else if(type.compareTo("quit") == 0) {
+			return "quit";
+		} else
+			return commande;
 	}
 }

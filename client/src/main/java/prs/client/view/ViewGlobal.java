@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
@@ -18,6 +19,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import prs.client.control.Controller;
@@ -26,6 +29,9 @@ public class ViewGlobal extends BorderPane {
 	TextArea inputText;
 	TextArea outputText;
 	Button executeButton;
+	Button stepButton;
+	Button nextButton;
+	private boolean step = false;
 
 	MenuItem fichierOuvrir;
 	MenuItem fichierSauver;
@@ -38,14 +44,26 @@ public class ViewGlobal extends BorderPane {
 		super();
 		this.control = control;
 		generateView();
-		executeAction();
+		buttonAction();
 		menuAction();
 		this.outputText.setText(welcomeMessage + "\n");
 	}
 
-	private void executeAction() {
+	private void buttonAction() {
 		executeButton.setOnAction(e -> {
-			control.sendInstructions(inputText.getText(), outputText);
+			this.step = false;
+			nextButton.setDisable(true);
+			outputText.setText("");
+			control.sendInstructions(inputText.getText(), outputText, false);
+		});
+		stepButton.setOnAction(e -> {
+			this.step = true;
+			nextButton.setDisable(false);
+			outputText.setText("");
+			control.sendInstructions(inputText.getText(), outputText, true);
+		});
+		nextButton.setOnAction(e -> {
+			control.sendNext(outputText);
 		});
 	}
 
@@ -55,7 +73,7 @@ public class ViewGlobal extends BorderPane {
 			BufferedReader bin;
 			String text = "";
 			String line = "";
-			file = control.showDialog(false, "user.home", "txt", "Text file(*.txt)");
+			file = Controller.showDialog(false, "user.home", "txt", "Text file(*.txt)");
 
 			if (file != null) {
 				System.out.println("file = "+file.getPath());
@@ -78,7 +96,7 @@ public class ViewGlobal extends BorderPane {
 		fichierSauver.setOnAction(e -> {
 			File file;
 			PrintStream out;
-			file = control.showDialog(true, "user.home", "txt", "Text file(*.txt)");
+			file = Controller.showDialog(true, "user.home", "txt", "Text file(*.txt)");
 			if (file != null) {
 				if(file.getName().endsWith(".txt")) {
 					try {
@@ -102,7 +120,7 @@ public class ViewGlobal extends BorderPane {
 		});
 		aideApropos.setOnAction(e -> {
 			Stage stage = new Stage();
-			Scene scene = new Scene(new AboutView(), 640, 480);
+			Scene scene = new Scene(new AboutView());
 			stage.setScene(scene);
 			stage.setTitle("A Propos");
 			stage.show();
@@ -111,15 +129,39 @@ public class ViewGlobal extends BorderPane {
 
 	private void generateView() {
 		HBox mainHBox = new HBox();
+		TilePane buttonBox = new TilePane();
+		double buttonSize = 160;
 
 		this.inputText = new TextArea();
 		this.outputText = new TextArea();
-		this.executeButton = new Button("executer programme ROBI");
+		this.executeButton = new Button("execute");
+		this.stepButton = new Button("step by step");
+		this.nextButton = new Button("next step");
+		
+		this.executeButton.setMaxWidth(buttonSize);
+		this.executeButton.setMinWidth(buttonSize);
+		this.stepButton.setMaxWidth(buttonSize);
+		this.stepButton.setMinWidth(buttonSize);
+		this.nextButton.setMaxWidth(buttonSize);
+		this.nextButton.setMinWidth(buttonSize);
+		
+		nextButton.setDisable(true);
 
+		this.inputText.setPrefSize(2000, 2000);
+		this.outputText.setPrefSize(2000, 2000);
+		
+		buttonBox.setTileAlignment(Pos.CENTER);
+		buttonBox.setHgap(16);
+		BorderPane.setAlignment(buttonBox, Pos.CENTER);
+		BorderPane.setMargin(buttonBox, new Insets(12,64,12,64));
+		
+		this.executeButton.setMaxWidth(120);
+		
 		mainHBox.getChildren().addAll(inputText, outputText);
+		buttonBox.getChildren().addAll(executeButton, stepButton, nextButton);
 		this.setTop(generateMenu());
 		this.setCenter(mainHBox);
-		this.setBottom(executeButton);
+		this.setBottom(buttonBox);
 		mainHBox.setPadding(new Insets(16));
 		mainHBox.setSpacing(8);
 	}

@@ -10,6 +10,11 @@ import java.net.UnknownHostException;
 import prs.client.control.Controller;
 
 public class Communicator {
+	private static Message STOP = new Message("stop", "");
+	private static Message NEXT = new Message("next", "");
+	private static Message STEP = new Message("step", "");
+	private static Message NOSTEP = new Message("nostep", "");
+	private static Message QUIT = new Message("quit", "");
 	protected static Socket socket;
 	protected static BufferedReader br;
 	protected static PrintStream ps;
@@ -20,41 +25,55 @@ public class Communicator {
 		Communicator.ps = new PrintStream(socket.getOutputStream());
 	}
 	
-	public void closeAll() throws IOException {
+	public static void closeAll() throws IOException {
 		Communicator.socket.close();
 		Communicator.br.close();
 		Communicator.ps.close();
 	}
 	
-	public String sendMessage(String message) throws IOException {
+	public String sendInstructions(String message, boolean step) throws IOException {
 		System.out.println("Sending message");
-		message += "\nstop";
-		ps.println(message);
+		Message send = new Message("instruction", message);
+		ps.println(Message.toJson(send));
+		if(step) {
+			ps.println(Message.toJson(STEP));
+			return "Step by Step mode\n";
+		}
+		else {
+			ps.println(Message.toJson(NOSTEP));
+			return retreiveMessage();
+		}
+	}
+	
+	public String sendNext() throws IOException {
+		ps.println(Message.toJson(NEXT));
 		return retreiveMessage();
 	}
 
 	public String retreiveMessage() throws IOException {
-		String message;
+		Message receive;
 		String sret = "";
-		System.out.println("Retreiving message");
-		while(!(message = br.readLine()).startsWith("stop")) {
-			if(message.startsWith("print::")) {
-				Controller.saveImage(message.split(" ")[1]);
-			}
-			else {
-				sret += message + "\n";
-				System.out.println(message);
+		while((receive = Message.fromJson(br.readLine())).getType().compareTo("stop") != 0) {
+			if(receive.getType().compareTo("print") == 0) {
+				Controller.saveImage(receive.getMessage());
+			} else if(receive.getType().compareTo("error") == 0) {
+				sret += " # " + receive.getMessage() + "\n";
+			} else if(receive.getType().compareTo("info") == 0) {
+				sret += ">" + receive.getMessage().replace("§", "\n>");
+				sret = sret.substring(0, sret.length() - 1);
+			} else {
+				sret += receive.getMessage() + "\n";
 			}
 		}
 		return sret;
 	}
 	
 	public String retreiveWelcome() throws IOException {
-		return br.readLine();
+		return retreiveMessage();
 	}
 	
-	public void sendQuit() {
-		ps.println("quit");
+	public static void sendQuit() {
+		ps.println(Message.toJson(QUIT));
 		try {
 			closeAll();
 		} catch (IOException e) {

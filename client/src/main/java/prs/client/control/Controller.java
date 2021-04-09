@@ -27,7 +27,7 @@ public class Controller {
 	public boolean connect(String stringHost, String stringPort) throws UnknownHostException, IOException {
 		int port;
 		try {
-			communicator.closeAll();
+			Communicator.closeAll();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -75,20 +75,33 @@ public class Controller {
 		stage.show();
 	}
 	
-	public void sendInstructions(String script, TextArea outputText) {
+	public void sendInstructions(String script, TextArea outputText, boolean step) {
 		String response;
 		System.out.println(script);
 		try {
-			response = this.communicator.sendMessage(script.replace("\n", ""));
+			response = this.communicator.sendInstructions(script.replace("\n", ""), step);
 			System.out.println(response);
 			outputText.setText(outputText.getText() + "\n" + response);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	public void sendNext(TextArea outputText) {
+		String response;
+		try {
+			System.out.println("ETAPE-DEBUT");
+			response = this.communicator.sendNext();
+			System.out.println(response);
+			outputText.setText(outputText.getText() + "\n" + response);
+			System.out.println("ETAPE-FIN");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void sendQuit() {
-		this.communicator.sendQuit();
+		Communicator.sendQuit();
 		goToLogin();
 	}
 	

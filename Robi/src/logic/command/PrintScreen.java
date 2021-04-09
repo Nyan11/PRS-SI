@@ -19,6 +19,6 @@ public class PrintScreen implements Command {
 	public Reference run(Reference reference, SNode method) {
 		BufferedImage bytes = ImageControl.createImage(space);
 		String encodedfile = ImageControl.encodeToString(bytes, "png");
-		return new Reference("print:: " + encodedfile);
+		return new Reference(encodedfile);
 	}
 }

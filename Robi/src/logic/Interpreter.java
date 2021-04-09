@@ -3,6 +3,7 @@ package logic;
 import java.io.PrintStream;
 
 import stree.parser.SNode;
+import utils.Message;
 
 public class Interpreter {
 	
@@ -16,26 +17,29 @@ public class Interpreter {
 		Reference exec;
 		try {
 			Reference receiver = getReceiver(environment, next);
-			ps.println(recoverCommand(next) + " -- ok");
 			exec = receiver.run(next);
+			if(exec == null) {
+				ps.println(Message.toJson(new Message("error", "CannotRunCommand")));
+				ps.println(Message.toJson(new Message("error", recoverCommand(next))));
+			} else {
+				ps.println(Message.toJson(new Message("trace", recoverCommand(next))));
+			}
 			switch(next.get(1).contents()) {
 				case "info":
-					ps.println("print:: " + exec.toString());
+					ps.println(Message.toJson(new Message("info", exec.toString().replace("\n", "§"))));
 					break;
 				case "print":
-					ps.println(exec.getReceiver());
+					ps.println(Message.toJson(new Message("print", exec.getReceiver().toString())));
 					break;
 			}
 		} catch(NullPointerException e) {
 			e.printStackTrace();
-			ps.println("### ERROR(NullPointerException) ###");
-			ps.println(recoverCommand(next));
-			ps.println("### ERROR ###");
+			ps.println(Message.toJson(new Message("error", "NullPointerException")));
+			ps.println(Message.toJson(new Message("error", recoverCommand(next))));
 		} catch(IndexOutOfBoundsException e) {
 			e.printStackTrace();
-			ps.println("### ERROR(IndexOutOfBoundsException) ###");
-			ps.println(recoverCommand(next));
-			ps.println("### ERROR ###");
+			ps.println(Message.toJson(new Message("error", "IndexOutOfBoundsException")));
+			ps.println(Message.toJson(new Message("error", recoverCommand(next))));
 		}
 	}
 	
